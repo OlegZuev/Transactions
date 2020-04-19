@@ -1,0 +1,69 @@
+﻿<Window x:Class="Transactions.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Transactions"
+        xmlns:viewModels="clr-namespace:Transactions.ViewModels"
+        xmlns:models="clr-namespace:Transactions.Models"
+        mc:Ignorable="d"
+        ResizeMode="CanMinimize"
+        Title="Транзакции" Height="500" Width="500" FontSize="16"
+        d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel}">
+    <StackPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Content="Begin Transaction" Margin="5" Command="{Binding BeginTransactionCommand}" />
+            <ComboBox Grid.Column="1" SelectedIndex="0" Margin="5"
+                      ItemsSource="{Binding IsolationLevels, UpdateSourceTrigger=PropertyChanged}"
+                      SelectedItem="{Binding CurrentIsolationLevel, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Grid.Column="2" Content="Commit" Margin="5" Command="{Binding CommitCommand}" />
+        </Grid>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0" Content="Refresh" Margin="5" Command="{Binding RefreshCommand}" />
+            <Button Grid.Column="1" Content="Add New Genre With Avg Popularity Minus 10" Margin="5"
+                    Command="{Binding AddNewGenreWithAvgPopularityMinus10Command}" />
+        </Grid>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0" Content="Set Save Point" Margin="5" Command="{Binding SetSavePointCommand}" />
+            <TextBox Grid.Column="1" Margin="5" Padding="3" Text="{Binding SavePointName}" />
+        </Grid>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0" Content="Rollback To" Margin="5" Command="{Binding RollbackCommand}" />
+            <ComboBox Grid.Column="1" Margin="5" SelectedIndex="0"
+                      ItemsSource="{Binding Path=(models:BookOrdersContext.SavePoints), UpdateSourceTrigger=PropertyChanged}"
+                      SelectedItem="{Binding CurrentSavePoint, UpdateSourceTrigger=PropertyChanged}" />
+        </Grid>
+
+        <TabControl>
+            <TabItem Header="Genres">
+                <Frame Source="GenresPage.xaml" />
+            </TabItem>
+            <TabItem Header="Literature Types">
+                <Frame Source="LiteratureTypesPage.xaml" />
+            </TabItem>
+        </TabControl>
+    </StackPanel>
+</Window>

@@ -1,0 +1,23 @@
+﻿<Application x:Class="Transactions.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Transactions"
+             xmlns:b="clr-namespace:ReactiveValidation.WPF.Behaviors;assembly=ReactiveValidation"
+             StartupUri="Views/MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/ReactiveValidation;component/WPF/Themes/Generic.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <Style x:Key="TextBoxValidator" TargetType="TextBox">
+                <Setter Property="b:ReactiveValidation.AutoRefreshErrorTemplate" Value="True" />
+                <Setter Property="b:ReactiveValidation.ErrorTemplate" Value="{StaticResource ValidationErrorTemplate}" />
+            </Style>
+            <Style x:Key="TextBlockValidator" TargetType="TextBlock">
+                <Setter Property="b:ReactiveValidation.AutoRefreshErrorTemplate" Value="True" />
+                <Setter Property="b:ReactiveValidation.ErrorTemplate" Value="{StaticResource ValidationErrorTemplate}" />
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

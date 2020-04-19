@@ -1,0 +1,86 @@
+﻿<Page x:Class="Transactions.Views.GenresPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:Transactions.Views"
+      xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+      xmlns:viewModels="clr-namespace:Transactions.ViewModels"
+      xmlns:converters="clr-namespace:Transactions.Converters"
+      xmlns:validators="clr-namespace:Transactions.Validators"
+      xmlns:models="clr-namespace:Transactions.Models"
+      mc:Ignorable="d"
+      d:DesignHeight="450" d:DesignWidth="400"
+      Title="GenresPage" d:DataContext="{d:DesignInstance viewModels:GenresViewModel }">
+    <Page.Resources>
+        <converters:ValidationToVisibilityConverter x:Key="ValidationToVisibilityConverter" />
+        <converters:EventArgsConverter x:Key="EventArgsConverter" />
+        <CollectionViewSource x:Key="LiteratureTypes" Source="{Binding LiteratureTypes}" />
+    </Page.Resources>
+    <Grid>
+        <DataGrid Name="DataGrid" ItemsSource="{Binding Genres}" AutoGenerateColumns="False">
+            <!-- Столбцы, которые отображают информацию о жанре -->
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+                                    ElementStyle="{StaticResource TextBlockValidator}"
+                                    EditingElementStyle="{StaticResource TextBoxValidator}" />
+                <DataGridTextColumn Header="Popularity"
+                                    Binding="{Binding PopularityText, UpdateSourceTrigger=PropertyChanged}"
+                                    ElementStyle="{StaticResource TextBlockValidator}"
+                                    EditingElementStyle="{StaticResource TextBoxValidator}" />
+                <DataGridComboBoxColumn Header="Literature type" ItemsSource="{Binding Source={StaticResource LiteratureTypes}, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
+                                        DisplayMemberPath="Name"
+                                        SelectedValuePath="Id"
+                                        SelectedValueBinding="{Binding LiteratureTypeId, UpdateSourceTrigger=PropertyChanged}"
+                                        Width="*" />
+            </DataGrid.Columns>
+
+            <!-- Валидатор-заглушка для отображение ошибок через ReactiveValidator -->
+            <DataGrid.RowValidationRules>
+                <validators:GenreValidator ValidatesOnTargetUpdated="True" ValidationStep="UpdatedValue" />
+            </DataGrid.RowValidationRules>
+
+            <!-- Значок ошибки слева от строки -->
+            <DataGrid.RowValidationErrorTemplate>
+                <ControlTemplate>
+                    <Grid Margin="0,-2,0,-2"
+                          Visibility="{Binding Path=Validator.IsValid, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ValidationToVisibilityConverter}}"
+                          d:DataContext="{d:DesignInstance models:Genre}">
+                        <Ellipse StrokeThickness="0" Fill="Red"
+                                 Width="{TemplateBinding FontSize}"
+                                 Height="{TemplateBinding FontSize}" />
+                        <TextBlock Text="!" FontSize="{TemplateBinding FontSize}"
+                                   FontWeight="Bold" Foreground="White"
+                                   HorizontalAlignment="Center" />
+                    </Grid>
+                </ControlTemplate>
+            </DataGrid.RowValidationErrorTemplate>
+
+            <!-- Обработка событий DataGrid -->
+            <b:Interaction.Triggers>
+                <b:EventTrigger EventName="AddingNewItem">
+                    <b:InvokeCommandAction Command="{Binding DataGridAddingNewItemCommand}"
+                                           PassEventArgsToCommand="True" />
+                </b:EventTrigger>
+                <b:EventTrigger EventName="RowEditEnding">
+                    <b:InvokeCommandAction Command="{Binding DataGridRowEditEndingCommand}"
+                                           EventArgsConverter="{StaticResource EventArgsConverter}"
+                                           EventArgsConverterParameter="{Binding ElementName=DataGrid}" />
+                </b:EventTrigger>
+                <b:EventTrigger EventName="PreviewKeyDown">
+                    <b:InvokeCommandAction Command="{Binding PreviewKeyDownCommand}"
+                                           EventArgsConverter="{StaticResource EventArgsConverter}"
+                                           EventArgsConverterParameter="{Binding ElementName=DataGrid}" />
+                </b:EventTrigger>
+                <b:EventTrigger EventName="BeginningEdit">
+                    <b:InvokeCommandAction Command="{Binding DataGridBeginningEditCommand}"
+                                           PassEventArgsToCommand="True" />
+                </b:EventTrigger>
+                <b:EventTrigger EventName="Loaded">
+                    <b:InvokeCommandAction Command="{Binding PageLoadedCommand}"
+                                           PassEventArgsToCommand="True" />
+                </b:EventTrigger>
+            </b:Interaction.Triggers>
+        </DataGrid>
+    </Grid>
+</Page>
